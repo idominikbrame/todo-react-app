@@ -3,55 +3,60 @@ import './App.css';
 
 
 
-class App extends React.Component{
+class App extends React.Component {
   constructor(props) {
     super(props)
+
     this.state = {
       isClicked: false,
       todos: [],
-      text: ''
+      text: ""
     }
-    this.handleChange = this.handleChange.bind(this) 
-    this.updateList = this.updateList.bind(this)   
   }
 
-  componentDidMount() {
-    console.log('I was mounted')
-  }
-
-  componentDidUpdate(){
-    console.log('update', this.state.text)
-  }
-
-  
-  handleChange = (event) => {
-      this.setState({
-        text: event.target.value
-      })      
-  }
- 
-  updateList = () =>{
-    this.state.todos.push("- " + this.state.text)
-    console.log(this.state.todos)
+  onClickHandler = () => {
     this.setState({
+      todos: [...this.state.todos, { id: this.state.todos.length + 1, text: this.state.text }],
       text: ""
     })
-    document.getElementById("input").value = ""
-    this.state.todos.forEach(item => {
-      React.createElement("li", )
+    this.refs.inputField.value=""
+  }
+
+  handleClick = (evt, id) => {
+    console.log(id)
+    const foundIndex = this.state.todos.findIndex(todo => todo.id === id)
+    const copy = [...this.state.todos]
+    copy.splice(foundIndex, 1)
+    this.setState({ todos: copy })
+    console.log(foundIndex)
+    console.log(this)
+  }
+
+  handleChange = event => {
+    this.setState({
+      text: event.target.value
     })
   }
-  render(){
+
+  render() {
     return (
-
-
-
       <div className="App">
-        <input type="text" id="input" onChange={this.handleChange}></input>
-        <input type="submit" onClick={this.updateList}></input>
-        <ul>
-          
-        </ul>
+        <button onClick={this.onClickHandler}>Add todo</button>
+        <input type="text" onChange={this.handleChange} ref="inputField"/>
+        <div>
+          <ul>
+            {this.state.todos.map(({ text, id }) => {
+              return (
+                <ul>
+                <li>
+                  <h3>{text}</h3>
+                  <button onClick={event => this.handleClick(event, id)}>Delete</button>
+                </li>
+                </ul>
+              )
+            })}
+          </ul>
+        </div>
       </div>
     )
   }
